@@ -10,6 +10,7 @@ from sklearn import metrics
 class Tst_class():
 
     def preprocessing_data(self, filename):
+        """Calculating Sales and Parts of Sales"""
         self.df = pd.read_excel(filename)
         self.df['Sale'] = self.df['amount']/self.df['quantity']  # Set the sale for each unique ID
         self.df['PoS'] = 1  # Set default value for Part of Sales for each UID
@@ -26,6 +27,7 @@ class Tst_class():
         return self.df
 
     def _set_PoS(self, i):
+        """Calculating PoS for each week"""
             tmp_we = i
             tmp_q = np.array(self.df[self.df['Week_ending'] == tmp_we]['quantity'])
             tmp_total = tmp_q.sum()
@@ -40,6 +42,8 @@ class Tst_class():
         print(self.df.tail(25))
 
     def get_uid_model(self, uid: int):
+        """Training model for each uid
+        returns model, coefs and DataFrame with predicted and real values"""
         main_df = self.df[self.df['Uid code'] == uid].copy()
         x = main_df[['Sale', 'ND']].values
         y = main_df['PoS'].values
@@ -48,7 +52,6 @@ class Tst_class():
         coeff_df = pd.DataFrame(model.coef_, main_df[['Sale', 'ND']].columns, columns=['Coefficient'])
         y_pred = model.predict(X_test)
         df_pred = pd.DataFrame({'Actual': Y_test, 'Predicted': y_pred})
-        self.show_plt(df_pred)
         return model, coeff_df, df_pred
 
     def show_plt(self, df_pred):
@@ -63,6 +66,8 @@ dirpath = 'test_data1.xlsx'
 lr = Tst_class()
 lr.preprocessing_data(dirpath)
 lr.preview_data()
-for i in range(71):
-    model, coef, df_pred = lr.get_uid_model(i)
-    lr.show_plt(df_pred)
+# Writing params of linearRegr models into .csv
+with open("params.csv", 'w') as f:
+    for i in range(71):
+        model, coef, df_pred = lr.get_uid_model(i)
+        f.write(f"UID {i}:\nIntercept: {model.intercept_}\n{coef}\n")
