@@ -28,15 +28,15 @@ class Tst_class():
 
     def _set_PoS(self, i):
         """Calculating PoS for each week"""
-            tmp_we = i
-            tmp_q = np.array(self.df[self.df['Week_ending'] == tmp_we]['quantity'])
-            tmp_total = tmp_q.sum()
-            self.df.loc[self.df['Week_ending'] == tmp_we, 'PoS'] = self.df['quantity']/tmp_total
-            one = np.array(self.df.loc[self.df['Week_ending'] == tmp_we, 'PoS']).sum()
-            if round(one) != 1:
-                # print(one)
-                raise ValueError
-            return self.df
+        tmp_we = i
+        tmp_q = np.array(self.df[self.df['Week_ending'] == tmp_we]['quantity'])
+        tmp_total = tmp_q.sum()
+        self.df.loc[self.df['Week_ending'] == tmp_we, 'PoS'] = self.df['quantity']/tmp_total
+        one = np.array(self.df.loc[self.df['Week_ending'] == tmp_we, 'PoS']).sum()
+        if round(one) != 1:
+            # print(one)
+            raise ValueError
+        return self.df
 
     def preview_data(self):
         print(self.df.tail(25))
